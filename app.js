@@ -7,6 +7,7 @@ app.use(express.static(path.join(__dirname, "dist")));
 app.use( express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.get('/', function (req, res) {
-  res.render('index', {});
+  res.sendFile('index.html');
 });
+
 app.listen(port);
