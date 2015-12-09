@@ -1,9 +1,12 @@
 var express = require('express');
-var port = process.env.PORT || 3000;
+var http = require('http');
+var gzippo = require('gzippo');
+
 var app = express();
-app.use(app.router);
-app.use(express.static(__dirname + "/dist"));
-app.get('/', function(req, res){
-  res.render('./index.html');
+app.use(gzippo.staticGzip('' + __dirname + '/dist'));
+app.use('/*', function(req, res){
+  res.sendfile(__dirname + '/dist/index.html');
 });
-app.listen(port);
+
+var server = http.createServer(app);
+server.listen(process.env.PORT || 5000);
