@@ -130,6 +130,21 @@ module.exports = function (grunt) {
       }
     },
 
+    buildcontrol: {
+      options: {
+          dir: 'dist',
+          commit: true,
+          push: true,
+          message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+      },
+      heroku: {
+          options: {
+              remote: 'git@heroku.com:myapp-grunt.git',
+              branch: 'master'
+          }
+      }
+   },
+
     // Empties folders to start fresh
     clean: {
       dist: {
@@ -409,4 +424,23 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.registerTask('heroku', [
+    'clean:dist',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat',
+    'ngmin',
+    'copy:dist',
+    'cdnify',
+    'cssmin',
+    'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin'
+  ]);
+
+  grunt.registerTask('deploy', ['buildcontrol']);
 };
