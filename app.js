@@ -1,9 +1,5 @@
 var express = require('express');
-var http = require('http');
-var gzippo = require('gzippo');
-var logger = require('morgan');
+var port = process.env.PORT || 3000;
 var app = express();
-app.use(logger());
-app.use(gzippo.staticGzip('' + __dirname));
-var server = http.createServer(app);
-server.listen(process.env.PORT || 5000);
+app.use(express.static(__dirname + ‘/public’));
+app.listen(port);
