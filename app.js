@@ -4,10 +4,9 @@ var port = process.env.PORT || 3000;
 var app = express();
 
 app.use(express.static(path.join(__dirname, "dist")));
-app.use( express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 app.get('/', function (req, res) {
-  res.sendFile('index.html');
+  res.sendFile(path.join(__dirname, "dist") + '/index.html');
 });
 
 app.listen(port);
