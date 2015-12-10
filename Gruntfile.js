@@ -78,8 +78,8 @@ module.exports = function (grunt) {
             return [
               connect.static('.tmp'),
               connect().use(
-                '/app/libs',
-                connect.static('./app/libs')
+                '/app/js/libs',
+                connect.static('./app/js/libs')
               ),
               connect.static(appConfig.app)
             ];
@@ -94,8 +94,8 @@ module.exports = function (grunt) {
               connect.static('.tmp'),
               connect.static('test'),
               connect().use(
-                '/app/libs',
-                connect.static('./app/libs')
+                '/app/js/libs',
+                connect.static('./app/js/libs')
               ),
               connect.static(appConfig.app)
             ];
@@ -336,7 +336,7 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
-          cwd: 'app/libs/bootstrap/dist',
+          cwd: 'app/js/libs/bootstrap/dist',
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'
         }]
