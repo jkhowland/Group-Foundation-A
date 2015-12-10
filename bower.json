@@ -19,5 +19,5 @@
     "angular-scenario": "1.2.16"
   },
   "postinstall" : "./node_modules/bower/bin/bower install",
-  "appPath": "app"
+  "appPath": "dist"
 }
