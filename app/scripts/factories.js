@@ -66,12 +66,22 @@ foundationApp
       return deferred.promise;
     };
 
+    var removeGroup = function(gid) {
+      var deferred = $q.defer();
+      var Group = $firebase(groupsURL).$asArray();
+      Group.$remove(Group[gid]).then(function(){
+        deferred.notify('removed group');
+        deferred.resolve({});
+      });
+    };
+
     return {
       groups: groups,
       current: currentPromise,
       update: updatePromise,
       get: getGroup,
-      add: addGroup
+      add: addGroup,
+      remove: removeGroup
     };
   }])
   .service("simpleLogin", ['$firebaseSimpleLogin', '$firebase', 'GlobalConfig', function($firebaseSimpleLogin, $firebase, GlobalConfig){
