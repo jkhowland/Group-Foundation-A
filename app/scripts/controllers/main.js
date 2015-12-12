@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('foundationApp')
   .controller('MainCtrl', function ($scope, User, $firebase, fbURL) {
     $scope.add = function () {
@@ -32,7 +30,7 @@ angular.module('foundationApp')
       $location.path('/');
     };
   })
-  .controller('LoginCtrl', function ($scope, $location, simpleLogin) {
+  .controller('LoginCtrl', ['$scope', '$location', 'simpleLogin', function ($scope, $location, simpleLogin) {
     $scope.login = function() {
       simpleLogin.$login('password', {
         email: $scope.username,
@@ -46,7 +44,7 @@ angular.module('foundationApp')
           console.log('Authentication failure');
         });
     };
-  })
+  }])
   .controller('RegisterCtrl', function($scope, $location, $routeParams, simpleLogin){
     $scope.register = function() {
       simpleLogin.$createUser($scope.email, $scope.password)

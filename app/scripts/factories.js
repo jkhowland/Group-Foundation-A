@@ -1,5 +1,3 @@
-"use strict";
-
 foundationApp
   .service('GlobalConfig', function () {
     var service = {
@@ -14,7 +12,7 @@ foundationApp
   .service("User", function (fbURL, $firebase) {
     return $firebase(new Firebase(fbURL)).$asArray();
   })
-  .service('UserGroup', function($firebase, $q, userPromise, GlobalConfig) {
+  .service('UserGroup', ['$firebase', '$q', 'userPromise', 'GlobalConfig', function($firebase, $q, userPromise, GlobalConfig) {
     var groupsURL = new Firebase(GlobalConfig.endpoint + 'groups/');
     var groups = function () {
       var deferred = $q.defer();
@@ -75,13 +73,13 @@ foundationApp
       get: getGroup,
       add: addGroup
     };
-  })
-  .service("simpleLogin", function($firebaseSimpleLogin, $firebase, GlobalConfig){
+  }])
+  .service("simpleLogin", ['$firebaseSimpleLogin', '$firebase', 'GlobalConfig', function($firebaseSimpleLogin, $firebase, GlobalConfig){
     var ref = new Firebase(GlobalConfig.endpoint);
     var authProvider = $firebaseSimpleLogin(ref);
     return authProvider;
-  })
-  .service("userPromise", function(simpleLogin, $firebase, $q, GlobalConfig) {
+  }])
+  .service("userPromise", ['simpleLogin', '$firebase', '$q', 'GlobalConfig', function(simpleLogin, $firebase, $q, GlobalConfig) {
     //function returnPromise will generate a promise that will get the authenticated user, make a profile if it doesn't exist,
     //and then return both objects on resolution.
     var returnPromise = function(){
@@ -132,4 +130,4 @@ foundationApp
     //return function to generate the promise. We return a function instead of
     //the promise directly so they can regenerate the promise if they fail authentication.
     return {getPromise: returnPromise};
-  });
+  }]);
