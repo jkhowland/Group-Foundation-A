@@ -1,26 +1,6 @@
 angular.module('foundationApp')
   .controller('MainCtrl', function ($scope, User, $firebase, fbURL) {
-    $scope.add = function () {
-      var save = User.$add({
-        firstName: $scope.firstName,
-        lastName: $scope.lastName,
-      });
-
-      $scope.firstName = '';
-      $scope.lastName = '';
-
-      if (save) {
-        alert('saved successfully');
-      } else {
-        alert('something went wrong');
-      }
-    };
-
-    $scope.user = User;
-
-    $scope.remove = function (id) {
-      User.$remove(id);
-    };
+    
   })
   .controller('EditCtrl', function ($scope, $location, $routeParams, $firebase, fbURL) {
     var userURL = new Firebase(fbURL + $routeParams.id);
@@ -76,12 +56,19 @@ angular.module('foundationApp')
     $scope.groups = {};
     UserGroup.groups().then(function(groups) {
       $scope.groups = groups;
+      console.log( groups );
     });
 
     $scope.add = function () {
       UserGroup.add({
         groupName: $scope.groupName,
         isdefault: false
+      });
+    };
+
+    $scope.remove = function(gid) {
+      UserGroup.remove(gid).then(function(){
+        alert('abc');
       });
     };
   })

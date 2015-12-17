@@ -18,7 +18,7 @@
     <tr ng-repeat="(id, name) in groups">
       <td> {{ name.groupName  }} </td>
       <td>
-        <a href="#/edit_group/{{ id }}">Edit</a>
+        <a href="#/edit_group/{{ name.$id }}">Edit</a>
       </td>
       <td>
         <a href="#" ng-click="remove(id)">Remove</a>
