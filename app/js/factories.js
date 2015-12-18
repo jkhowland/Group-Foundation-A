@@ -12,7 +12,8 @@ foundationApp
             globalPath: 'assets/global',
             layoutPath: 'assets/layouts/layout4',
             firebaseUrl: 'https://foundation-app.firebaseio.com/',
-            bodyClass: 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load'
+            bodyClass: 'login',
+            signin: true
         };
 
         $rootScope.settings = settings;
