@@ -6,5 +6,5 @@ angular.module('foundationApp').controller('UserProfileController', function($ro
 
     // set sidebar closed and body solid layout mode
     $rootScope.settings.layout.pageBodySolid = true;
-    $rootScope.settings.layout.pageSidebarClosed = true;
+    $rootScope.settings.layout.pageSidebarClosed = false;
 }); 
