@@ -13,14 +13,63 @@ foundationApp
             layoutPath: 'assets/layouts/layout4',
             firebaseUrl: 'https://foundation-app.firebaseio.com/',
             bodyClass: 'login',
-            signin: true
+            signinpage: true,
+            checkedAuth: false
         };
 
         $rootScope.settings = settings;
 
         return settings;
     }])
-    .service('UserGroup', ['$firebase', '$q', 'userPromise', 'settings', function ($firebase, $q, userPromise, GlobalConfig) {
+    .service('User', ['settings', 'userPromise', 'simpleLogin', '$q', function( settings, userPromise, simpleLogin, $q ) {
+        var curUser = {};
+        var loggedIn = false;
+        var checkedAuth = false;
+
+        return {
+            user: function() {
+                return curUser;
+            },
+            checkAuth: function() {
+                var deferred = $q.defer();
+                userPromise.getPromise({}).then(
+                    function(userInfo){
+                        curUser = userInfo;
+                        loggedIn = true;
+                        settings.signinpage = false;
+                        settings.bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load';
+                        settings.checkedAuth = true;
+                        deferred.notify('get user profile');
+                        deferred.resolve();
+                    }).catch(function(err){
+                        settings.checkedAuth = true;
+                    });
+                return deferred.promise;
+            },
+            setUserInfo: function( user ) {
+                curUser = user;
+                loggedIn = true;
+                settings.signinpage = false;
+                settings.bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load';
+            },
+            isLoggedIn: function() {
+                return loggedIn;
+            },
+            isCheckedAuth: function() {
+                return checkedAuth;
+            },
+            logout: function() {
+                simpleLogin.$logout();
+                curUser = {};
+                loggedIn = false;
+                settings.signinpage = true;
+                settings.bodyClass = 'signin';
+
+                location.href = '#/signin';
+            }
+        };
+    }])
+    .service('UserGroup', ['$firebase', '$q', 'userPromise', 'settings', function ($firebase, $q, userPromise, settings) {
         var groupsURL = new Firebase(settings.firebaseUrl + 'groups/');
         var groups = function () {
             var deferred = $q.defer();
@@ -97,10 +146,10 @@ foundationApp
         var authProvider = $firebaseSimpleLogin(ref);
         return authProvider;
     }])
-    .service("userPromise", ['simpleLogin', '$firebase', '$q', 'settings', function (simpleLogin, $firebase, $q, GlobalConfig) {
+    .service("userPromise", ['simpleLogin', '$firebase', '$q', 'settings', function (simpleLogin, $firebase, $q, settings) {
         //function returnPromise will generate a promise that will get the authenticated user, make a profile if it doesn't exist,
         //and then return both objects on resolution.
-        var returnPromise = function () {
+        var returnPromise = function (profile) {
             var user, publicUser;
             var deferred = $q.defer();
 
@@ -112,24 +161,19 @@ foundationApp
                     if (remoteUser.profile) {
                         deferred.notify('Existing public profile');
                         publicUser = remoteUser;
-                        deferred.resolve({user: user, publicUser: publicUser});
+                        deferred.resolve({user: user, profile: remoteUser.profile});
                     } else {
                         deferred.notify('New user - initializing profile');
 
                         // remoteUser.profile_img_url = auth_user.thirdPartyUserData.profile_image_url;
-                        remoteUser.profile = {
-                            username: '',
-                            phone: '',
-                            isadmin: false,
-                            groupid: ''
-                        };
+                        remoteUser.profile = profile;
                         remoteUser.$save(function () {
                             console.log('successfully saved')
                         });  //save to firebase
                         publicUser = remoteUser;
-                        deferred.resolve({user: user, publicUser: publicUser});
+                        deferred.resolve({user: user, profile: remoteUser.profile});
                     }
-                });
+                }).catch(function(){ console.log('catch event')});
             };
 
             //get the authenticated user
@@ -142,6 +186,8 @@ foundationApp
                 } else {
                     deferred.reject('Not authenticated')
                 }
+            }).catch(function(err) {
+                console.log( 'catch event' );
             });
 
             //return promise

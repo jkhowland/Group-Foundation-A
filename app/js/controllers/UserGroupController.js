@@ -1,5 +1,5 @@
 /* Setup general page controller */
-angular.module('foundationApp').controller('UserGroupController', ['$rootScope', '$scope', 'settings', function($rootScope, $scope, settings) {
+angular.module('foundationApp').controller('UserGroupController', ['$rootScope', '$scope', 'settings', 'UserGroup', function($rootScope, $scope, settings, UserGroup) {
     $scope.$on('$viewContentLoaded', function() {
         // initialize core components
         App.initAjax();
@@ -11,4 +11,8 @@ angular.module('foundationApp').controller('UserGroupController', ['$rootScope',
         $rootScope.settings.layout.pageBodySolid = false;
         $rootScope.settings.layout.pageSidebarClosed = false;
     });
+
+    $scope.init = function() {
+
+    };
 }]);
