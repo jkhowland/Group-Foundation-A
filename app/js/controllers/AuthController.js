@@ -20,6 +20,11 @@ angular.module('foundationApp')
                 registerForm: false
             };
 
+            $scope.signinError = false;
+            $scope.signinErrorMessage = '';
+            $scope.regError = false;
+            $scope.regErrorMessage = '';
+
             $scope.$on('$viewContentLoaded', function() {
                 if ( User.isLoggedIn() ) {
                     userPromise.getPromise({}).then(function(){});
@@ -27,8 +32,6 @@ angular.module('foundationApp')
                     return;
                 } else {
                     User.checkAuth(function(userInfo) {
-                        console.log( userInfo );
-
                         $state.go('dashboard');
                     });
                 }
@@ -48,7 +51,8 @@ angular.module('foundationApp')
 
             // load jquery plugin for login form
             $scope.handleLogin = function() {
-
+                $scope.signinError = false;
+                $scope.signinErrorMessage = '';
                 $('.login-form').validate({
                     errorElement: 'span', //default input error message container
                     errorClass: 'help-block', // default input error message class
@@ -76,7 +80,8 @@ angular.module('foundationApp')
                     },
 
                     invalidHandler: function(event, validator) { //display error alert on form submit
-                        $('.alert-danger', $('.login-form')).show();
+                        $scope.signinError = true;
+                        $scope.signinErrorMessage = 'Enter your email address and password.';
                     },
 
                     highlight: function(element) { // hightlight error inputs
@@ -190,12 +195,6 @@ angular.module('foundationApp')
                         }
                     },
 
-                    messages: { // custom messages for radio buttons and checkboxes
-                        tnc: {
-                            required: "Please accept TNC first."
-                        }
-                    },
-
                     invalidHandler: function(event, validator) { //display error alert on form submit
 
                     },
@@ -250,7 +249,8 @@ angular.module('foundationApp')
                         });
                     }, function(error) {
                         // Failure callback
-                        console.log('Authentication failure');
+                        $scope.signinError = true;
+                        $scope.signinErrorMessage = error.message.split(':')[1];
                     });
             };
 
@@ -302,8 +302,7 @@ angular.module('foundationApp')
                                     $state.go('dashboard');
                                 });
                             }, function(error) {
-                                // Failure callback
-                                console.log('Authentication failure');
+
                             });
                     }, function(error) {
                         // do things if failure

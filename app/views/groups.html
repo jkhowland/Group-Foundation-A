@@ -19,13 +19,19 @@
                 <th>Users</th>
                 <th>Child Profiles</th>
             </tr>
-            <tr>
+            <tr ng-repeat="group in groups">
                 <td>
-
+                    {{ group.groupName }}
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                    {{ group.paid }}
+                </td>
+                <td>
+                    {{ group.admin }}
+                </td>
+                <td>
+                    {{ group.childProfiles }}
+                </td>
             </tr>
         </table>
     </div>
