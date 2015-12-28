@@ -20,10 +20,20 @@ foundationApp.controller('AppController', ['$scope', '$rootScope', function ($sc
 }]);
 
 /* Setup Layout Part - Header */
-foundationApp.controller('HeaderController', ['$scope', function ($scope) {
+foundationApp.controller('HeaderController', ['$scope', '$state', 'User', function ($scope, $state, User) {
+    $scope.user = {};
+
     $scope.$on('$includeContentLoaded', function () {
         Layout.initHeader(); // init header
+
+        $scope.user = User.user();
     });
+
+    $scope.logout = function() {
+        User.logout(function() {
+            $state.go('signin');
+        });
+    };
 }]);
 
 /* Setup Layout Part - Sidebar */
@@ -50,7 +60,7 @@ foundationApp.controller('FooterController', ['$scope', function ($scope) {
 /* Setup Rounting For All Pages */
 foundationApp.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     // Redirect any unmatched url
-    $urlRouterProvider.otherwise("/signin");
+    $urlRouterProvider.otherwise("/dashboard.html");
 
     $stateProvider
 
@@ -93,7 +103,6 @@ foundationApp.config(['$stateProvider', '$urlRouterProvider', function ($statePr
                         files: [
                             'assets/pages/css/login-2.css',
 
-                            'assets/pages/scripts/login.js',
                             'js/controllers/AuthController.js'
                         ]
                     });
@@ -171,21 +180,21 @@ foundationApp.config(['$stateProvider', '$urlRouterProvider', function ($statePr
 }]);
 
 /* Init global settings and run the app */
-foundationApp.run(["$rootScope", "settings", "$state", "$stateParams", "userPromise", function ($rootScope, settings, $state, $stateParams, userPromise) {
+foundationApp.run(["$rootScope", "settings", "$state", "$stateParams", "User", function ($rootScope, settings, $state, $stateParams, User) {
     $rootScope.$state = $state; // state to be accessed from view
     $rootScope.$settings = settings; // settings to be accessed from view
     $rootScope.$stateParams = $stateParams; // stateParams to be accessed from view
-    settings.bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load';
-    settings.signin = false;
+
     // Listen to '$locationChangeSuccess', not '$stateChangeStart'
     $rootScope.$on('$locationChangeSuccess', function() {
-        userPromise.getPromise().then(function(user){
-
-        },
-        function(){
+        if ( User.isLoggedIn() ){
+            settings.bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo page-on-load';
+            settings.signinpage = false;
+        } else {
+            // if (User.isCheckedAuth()) {
             settings.bodyClass = 'login';
-            settings.signin = true;
+            settings.signinpage = true;
             $state.go('signin');
-        });
+        }
     })
 }]);
